@@ -100,7 +100,7 @@
   <main role="main" class="flex-shrink-0">
     <div class="container">
       <img src="proculiot_vector_sm.png" class="img-rounded" alt="Procul-iot" width="192" height="46">
-      <h1 class="display-4">MMC-W505 Health Thermometer</h1>
+      <h1 class="display-4">MMC-W505</h1>
     </div>
 
 
@@ -125,7 +125,7 @@
 
 		<div class="container">
       <span class="d-block p-2 bg-dark text-white font-weight-bold mb-5">Health Thermometer</span>
-       <p>This test illustrates the use of the Web Bluetooth API to start and stop characteristic notifications from a nearby Bluetooth Low Energy Device.</p>
+       <p>This illustrates the use of the Web Bluetooth API to connect and retireve data from a nearby Bluetooth Low Energy MMC-W505 Device.</p>
 
 <form>
   <button id="startNotifications">Start Measurement</button>
@@ -143,7 +143,7 @@
       document.querySelector('#log').textContent += line + '\n';
     },
 
-    clearLog: function() {
+    c: function() {
       document.querySelector('#log').textContent = '';
     },
 
@@ -160,7 +160,8 @@
     }
   };
 </script>
-
+<br>
+<br>
 <h3>Live Output</h3>
 <div id="output" class="output">
   <div id="content"></div>
@@ -241,9 +242,9 @@ function handleNotifications(event) {
   //}
   let flag =  value.getUint8(1);
   let global_cnt = value.getUint8(4);
-  let temp1 = value.getUint16(8);
+  let temp1 = value.getUint16(8, true);
   temp1 = temp1 / 100.00;
-  let temp2 = value.getUint16(10);
+  let temp2 = value.getUint16(10, true);
   temp2 = temp2 / 100.00;
   let stg_cnt = value.getUint8(14);
   let stg_cnt_strt = value.getUint8(16);

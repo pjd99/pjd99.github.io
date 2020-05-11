@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="BLE Web test">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script>
+      // Add a global error event listener early on in the page load, to help ensure that browsers
+      // which don't support specific functionality still end up displaying a meaningful message.
+      window.addEventListener('error', function(error) {
+        if (ChromeSamples && ChromeSamples.setStatus) {
+          console.error(error);
+          ChromeSamples.setStatus(error.message + ' (Your browser may not support this feature.)');
+          error.preventDefault();
+        }
+      });
+    </script>
+    <link rel="stylesheet" href=css/main.css">
+   
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+
+    <script src="//stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
+
+
+    <script type="text/javascript" language="javascript" >
+    $(document).ready(function() {
+
+    } );
+  </script>
+
+  <link href="sticky-footer-navbar.css" rel="stylesheet">
+</head>
+
+<body class="d-flex flex-column h-100">
+  <header>
+    <title>Ble Health Thermometer</title>
+
+<!-- Fixed navbar -->
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <a class="navbar-brand">BLE Health Thermometer</a>
+
+
+</nav>
+
+
+  <script>
+  if('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js');
+  }
+  </script>
+
+  <script>
+  window.addEventListener('DOMContentLoaded', function() {
+    const searchParams = new URL(location).searchParams;
+    const inputs = Array.from(document.querySelectorAll('input[id]'));
+
+    inputs.forEach(input => {
+      if (searchParams.has(input.id)) {
+        if (input.type == 'checkbox') {
+          input.checked = searchParams.get(input.id);
+        } else {
+          input.value = searchParams.get(input.id);
+          input.blur();
+        }
+      }
+      if (input.type == 'checkbox') {
+        input.addEventListener('change', function(event) {
+          const newSearchParams = new URL(location).searchParams;
+          if (event.target.checked) {
+            newSearchParams.set(input.id, event.target.checked);
+          } else {
+            newSearchParams.delete(input.id);
+          }
+          history.replaceState({}, '', Array.from(newSearchParams).length ?
+              location.pathname + '?' + newSearchParams : location.pathname);
+        });
+      } else {
+        input.addEventListener('input', function(event) {
+          const newSearchParams = new URL(location).searchParams;
+          if (event.target.value) {
+            newSearchParams.set(input.id, event.target.value);
+          } else {
+            newSearchParams.delete(input.id);
+          }
+          history.replaceState({}, '', Array.from(newSearchParams).length ?
+              location.pathname + '?' + newSearchParams : location.pathname);
+        });
+      }
+    });
+  });
+  </script>
+  </header>
+  <main role="main" class="flex-shrink-0">
+    <div class="container">
+      <img src="proculiot_vector_sm.png" class="img-rounded" alt="Procul-iot" width="192" height="46">
+      <h1 class="display-4">MMC-W505 Health Thermometer</h1>
+    </div>
+
+
+  <body>
+    <style>
+			div.container {
+			   margin: 0 auto;
+			   max-width:760px;
+			}
+			div.header {
+			   margin: 100px auto;
+			   line-height:10px;
+			   max-width:760px;
+			}
+			body {
+			   background: #f7f7f7;
+			   color: #333;
+			   font: 90%/1.45em "Helvetica Neue",HelveticaNeue,Verdana,Arial,Helvetica,sans-serif;
+			}
+		</style>
+
+
+		<div class="container">
+      <span class="d-block p-2 bg-dark text-white font-weight-bold mb-5">Health Thermometer</span>
+       <p>This test illustrates the use of the Web Bluetooth API to start and stop characteristic notifications from a nearby Bluetooth Low Energy Device.</p>
+
+<form>
+  <button id="startNotifications">Start Measurement</button>
+  <button id="stopNotifications">Disconnect</button>
+</form>
+
+
+<script>
+  var ChromeSamples = {
+    log: function() {
+      var line = Array.prototype.slice.call(arguments).map(function(argument) {
+        return typeof argument === 'string' ? argument : JSON.stringify(argument);
+      }).join(' ');
+
+      document.querySelector('#log').textContent += line + '\n';
+    },
+
+    clearLog: function() {
+      document.querySelector('#log').textContent = '';
+    },
+
+    setStatus: function(status) {
+      document.querySelector('#status').textContent = status;
+    },
+
+    setContent: function(newContent) {
+      var content = document.querySelector('#content');
+      while(content.hasChildNodes()) {
+        content.removeChild(content.lastChild);
+      }
+      content.appendChild(newContent);
+    }
+  };
+</script>
+
+<h3>Live Output</h3>
+<div id="output" class="output">
+  <div id="content"></div>
+  <div id="status"></div>
+  <pre id="log"></pre>
+</div>
+
+<script>
+var bluetoothDevice;
+var myCharacteristic;
+
+function onStartButtonClick() {
+  let serviceUuid = "health_thermometer";
+  if (serviceUuid.startsWith('0x')) {
+    serviceUuid = parseInt(serviceUuid);
+  }
+  let characteristicUuid = "intermediate_temperature";
+  if (characteristicUuid.startsWith('0x')) {
+    characteristicUuid = parseInt(characteristicUuid);
+  }
+
+  log('Requesting Bluetooth Device...');
+  navigator.bluetooth.requestDevice({filters: [{services: [serviceUuid]}]})
+  .then(device => {
+    log('Connecting to GATT Server...');
+    bluetoothDevice = device;
+    return bluetoothDevice.gatt.connect();
+  })
+  .then(server => {
+    log('Getting Service...');
+    return server.getPrimaryService(serviceUuid);
+  })
+  .then(service => {
+    log('Getting Characteristic...');
+    return service.getCharacteristic(characteristicUuid);
+  })
+  .then(characteristic => {
+    myCharacteristic = characteristic;
+    return myCharacteristic.startNotifications().then(_ => {
+      log('> Notifications started');
+      myCharacteristic.addEventListener('characteristicvaluechanged',
+          handleNotifications);
+    });
+  })
+  .catch(error => {
+    log('Argh! ' + error);
+  });
+}
+
+function onStopButtonClick() {
+  if (myCharacteristic) {
+    myCharacteristic.stopNotifications()
+    .then(_ => {
+      log('> Notifications stopped');
+      myCharacteristic.removeEventListener('characteristicvaluechanged',
+          handleNotifications);
+    })
+    .catch(error => {
+      log('Argh! ' + error);
+    });
+  }
+  log('Disconnecting from Bluetooth Device...');
+  if (bluetoothDevice.gatt.connected) {
+    bluetoothDevice.gatt.disconnect();
+  } else {
+    log('> Bluetooth Device is already disconnected');
+  }
+}
+
+function handleNotifications(event) {
+  let value = event.target.value;
+  let a = [];
+  // Convert raw data bytes to hex values just for the sake of showing something.
+  // In the "real" world, you'd use data.getUint8, data.getUint16 or even
+  // TextDecoder to process raw data bytes.
+  //for (let i = 0; i < value.byteLength; i++) {
+    //a.push('0x' + ('00' + value.getUint8(i).toString(16)).slice(-2));
+  //}
+  let flag =  value.getUint8(1);
+  let global_cnt = value.getUint8(4);
+  let temp1 = value.getUint16(8);
+  temp1 = temp1 / 100.00;
+  let temp2 = value.getUint16(10);
+  temp2 = temp2 / 100.00;
+  let stg_cnt = value.getUint8(14);
+  let stg_cnt_strt = value.getUint8(16);
+  let data_str = 'Flag: ' +  flag + ' Temp 1: ' +  temp1.toFixed(2) + ' Temp 2: ' + temp2.toFixed(2) + ' Phase Start: ' + stg_cnt_strt + ' Countdown: ' + stg_cnt;
+  log('> ' + data_str);
+}
+</script>
+
+<script>
+  document.querySelector('#startNotifications').addEventListener('click', function(event) {
+    event.stopPropagation();
+    event.preventDefault();
+
+    if (isWebBluetoothEnabled()) {
+      ChromeSamples.clearLog();
+      onStartButtonClick();
+    }
+  });
+  document.querySelector('#stopNotifications').addEventListener('click', function(event) {
+    event.stopPropagation();
+    event.preventDefault();
+
+    if (isWebBluetoothEnabled()) {
+      onStopButtonClick();
+    }
+  });
+</script>
+
+<script>
+  log = ChromeSamples.log;
+
+  function isWebBluetoothEnabled() {
+    if (navigator.bluetooth) {
+      return true;
+    } else {
+      ChromeSamples.setStatus('Web Bluetooth API is not available.\n' +
+          'Please make sure the "Experimental Web Platform features" flag is enabled.');
+      return false;
+    }
+  }
+</script>
+
+</div>
+
+</main>
+
+<footer class="footer mt-auto py-3">
+  <div class="container">
+    <span class="text-muted">Developed by <a href="https://www.proculiot.com">Procul-iot</a> &#169; 2020 </span>
+  </div>
+</footer>
+
+    <!-- javascript -->
+
+</body>
+</html>

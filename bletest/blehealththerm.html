@@ -103,8 +103,6 @@
       <h1 class="display-4">MMC-W505</h1>
     </div>
 
-
-  <body>
     <style>
 			div.container {
 			   margin: 0 auto;
@@ -123,15 +121,16 @@
 		</style>
 
 
-		<div class="container">
+  <div class="container">
       <span class="d-block p-2 bg-dark text-white font-weight-bold mb-5">Health Thermometer</span>
        <p>This illustrates the use of the Web Bluetooth API to connect and retireve data from a nearby Bluetooth Low Energy MMC-W505 Device.</p>
+  </div>
 
 <form>
   <button id="startNotifications">Start Measurement</button>
   <button id="stopNotifications">Disconnect</button>
 </form>
-
+</div>
 
 <script>
   var ChromeSamples = {
@@ -242,9 +241,9 @@ function handleNotifications(event) {
   //}
   let flag =  value.getUint8(1);
   let global_cnt = value.getUint8(4);
-  let temp1 = value.getUint16(8, true);
+  let temp1 = value.getUint16(8, false);
   temp1 = temp1 / 100.00;
-  let temp2 = value.getUint16(10, true);
+  let temp2 = value.getUint16(10, false);
   temp2 = temp2 / 100.00;
   let stg_cnt = value.getUint8(14);
   let stg_cnt_strt = value.getUint8(16);

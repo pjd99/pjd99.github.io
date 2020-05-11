@@ -241,9 +241,9 @@ function handleNotifications(event) {
   //}
   let flag =  value.getUint8(1);
   let global_cnt = value.getUint8(4);
-  let temp1 = value.getUint16(8, false);
+  let temp1 = value.getUint16(9, true);
   temp1 = temp1 / 100.00;
-  let temp2 = value.getUint16(10, false);
+  let temp2 = value.getUint16(11, true);
   temp2 = temp2 / 100.00;
   let stg_cnt = value.getUint8(14);
   let stg_cnt_strt = value.getUint8(16);

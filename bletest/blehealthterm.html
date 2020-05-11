@@ -100,7 +100,7 @@
   <main role="main" class="flex-shrink-0">
     <div class="container">
       <img src="proculiot_vector_sm.png" class="img-rounded" alt="Procul-iot" width="192" height="46">
-      <h1 class="display-4">Notifications Test</h1>
+      <h1 class="display-4">Health Thermometer</h1>
     </div>
 
 
@@ -124,6 +124,7 @@
 
 
 		<div class="container">
+      <span class="d-block p-2 bg-dark text-white font-weight-bold mb-5">REQUIRED?</span>
        <p>This test illustrates the use of the Web Bluetooth API to start and stop characteristic notifications from a nearby Bluetooth Low Energy Device.</p>
 
 <form>
@@ -371,12 +372,14 @@
 var myCharacteristic;
 
 function onStartButtonClick() {
-  let serviceUuid = document.querySelector('#service').value;
+  //let serviceUuid = document.querySelector('#service').value;
+  let serviceUuid = "health_thermometer";
   if (serviceUuid.startsWith('0x')) {
     serviceUuid = parseInt(serviceUuid);
   }
 
-  let characteristicUuid = document.querySelector('#characteristic').value;
+  //let characteristicUuid = document.querySelector('#characteristic').value;
+  let characteristicUuid = "intermediate_temperature";
   if (characteristicUuid.startsWith('0x')) {
     characteristicUuid = parseInt(characteristicUuid);
   }

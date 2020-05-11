@@ -236,19 +236,20 @@ function handleNotifications(event) {
   // Convert raw data bytes to hex values just for the sake of showing something.
   // In the "real" world, you'd use data.getUint8, data.getUint16 or even
   // TextDecoder to process raw data bytes.
-  //for (let i = 0; i < value.byteLength; i++) {
-    //a.push('0x' + ('00' + value.getUint8(i).toString(16)).slice(-2));
-  //}
+  for (let i = 0; i < value.byteLength; i++) {
+    a.push('0x' + ('00' + value.getUint8(i).toString(16)).slice(-2));
+  }
   let flag =  value.getUint8(1);
   let global_cnt = value.getUint8(4);
-  let temp1 = value.getUint16(9, true);
+  let temp1 = value.getUint16(8, true);
   temp1 = temp1 / 100.00;
-  let temp2 = value.getUint16(11, true);
+  let temp2 = value.getUint16(10, true);
   temp2 = temp2 / 100.00;
   let stg_cnt = value.getUint8(14);
   let stg_cnt_strt = value.getUint8(16);
   let data_str = 'Flag: ' +  flag + ' Temp 1: ' +  temp1.toFixed(2) + ' Temp 2: ' + temp2.toFixed(2) + ' Phase Start: ' + stg_cnt_strt + ' Countdown: ' + stg_cnt;
   log('> ' + data_str);
+  log('> ' + a.join(' '));
 }
 </script>
 

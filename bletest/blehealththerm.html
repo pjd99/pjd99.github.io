@@ -133,15 +133,15 @@
     <div class="card text-center">
       <div class="card-body">
         <h5 class="card-title">Temperature</h5>
-        <p class="card-text" id="temp">--.--&#8451;</p>
+        <p class="card-text" id="temp">--.-- &#8451;</p>
       </div>
     </div>
   </div>
   <div class="col-sm-6">
-    <div class="card">
+    <div class="card text-center">
       <div class="card-body">
         <h5 class="card-title">Status</h5>
-        <p class="card-text" id="status">Waiting...</p>
+        <p class="card-text" id="devstatus">Waiting...</p>
       </div>
     </div>
   </div>
@@ -181,8 +181,7 @@
     }
   };
 </script>
-<br>
-<br>
+<div class="row top-buffer"></div>
 <h3>Live Output</h3>
 <div id="output" class="output">
   <div id="content"></div>
@@ -254,13 +253,14 @@ function onStopButtonClick() {
 
 function handleNotifications(event) {
   let value = event.target.value;
-  let a = [];
+  //let a = [];
   // Convert raw data bytes to hex values just for the sake of showing something.
   // In the "real" world, you'd use data.getUint8, data.getUint16 or even
   // TextDecoder to process raw data bytes.
-  for (let i = 0; i < value.byteLength; i++) {
-    a.push('0x' + ('00' + value.getUint8(i).toString(16)).slice(-2));
-  }
+  //for (let i = 0; i < value.byteLength; i++) {
+    //a.push('0x' + ('00' + value.getUint8(i).toString(16)).slice(-2));
+  //}
+  let prime_temp = "--.--";
   let flag =  value.getUint8(1);
   let global_cnt = value.getUint8(4);
   let temp1 = value.getUint16(8, true);
@@ -269,9 +269,38 @@ function handleNotifications(event) {
   temp2 = temp2 / 100.00;
   let stg_cnt = value.getUint8(14);
   let stg_cnt_strt = value.getUint8(16);
-  let data_str = 'Flag: ' +  flag + ' Temp 1: ' +  temp1.toFixed(2) + ' Temp 2: ' + temp2.toFixed(2) + ' Phase Start: ' + stg_cnt_strt + ' Countdown: ' + stg_cnt;
+
+  switch (flag) {
+   case 1:
+    prime_temp = "--.--";
+    break;
+   case 2:
+    prime_temp = (temp2.toFixed(2)).toString();
+    break;
+   case 3:
+    prime_temp = (temp2.toFixed(2)).toString();
+    break;
+   case 5:
+    prime_temp = (temp2.toFixed(2)).toString();
+    break;
+   case 6:
+     prime_temp = (temp2.toFixed(2)).toString();
+   case 7:
+    prime_temp = (temp2.toFixed(2)).toString();
+    break;
+   case 8:
+     prime_temp = (temp2.toFixed(2)).toString();
+   default:
+    prime_temp = "--.--";
+ }
+
+  let status_text = 'Phase: ' +  flag + ' Temp 1: ' +  temp1.toFixed(2) + ' Temp 2: ' + temp2.toFixed(2);
+  let data_str = status_text + ' Phase Start: ' + stg_cnt_strt + ' Countdown: ' + stg_cnt;
   log('> ' + data_str);
-  log('> ' + a.join(' '));
+
+  document.getElementById("temp").innerHTML = prime_temp +' &#8451;';
+  document.getElementById("devstatus").innerHTML = status_text;
+  //log('> ' + a.join(' '));
 }
 </script>
 

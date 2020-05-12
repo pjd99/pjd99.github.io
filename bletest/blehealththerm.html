@@ -133,7 +133,7 @@
     <div class="card text-center">
       <div class="card-body">
         <h5 class="card-title">Temperature</h5>
-        <p class="card-text" id="temp">--.-- &#8451;</p>
+        <p class="card-text" id="temp" style="font-size:150%;>--.-- &#8451;</p>
       </div>
     </div>
   </div>
@@ -275,42 +275,39 @@ function handleNotifications(event) {
     prime_temp = "--.--";
     break;
    case 2:
-    prime_temp = (temp2.toFixed(2)).toString();
-    break;
    case 3:
-    prime_temp = (temp2.toFixed(2)).toString();
-    break;
    case 5:
-    prime_temp = (temp2.toFixed(2)).toString();
-    break;
    case 6:
-     prime_temp = (temp2.toFixed(2)).toString();
    case 7:
-    prime_temp = (temp2.toFixed(2)).toString();
-    break;
    case 8:
      prime_temp = (temp2.toFixed(2)).toString();
+   break;
    default:
-    prime_temp = "--.--";
+      prime_temp = "--.--";
  }
 
-  let status_text = 'Phase: ' +  flag + ' Temp 1: ' +  temp1.toFixed(2) + ' Temp 2: ' + temp2.toFixed(2);
+  let status_text = 'Phase: ' +  flag + '<br>Temp 1: ' +  temp1.toFixed(2) + ' Temp 2: ' + temp2.toFixed(2);
   let data_str = status_text + ' Phase Start: ' + stg_cnt_strt + ' Countdown: ' + stg_cnt;
+  ChromeSamples.clearLog();
   log('> ' + data_str);
 
   document.getElementById("temp").innerHTML = prime_temp +' &#8451;';
   document.getElementById("devstatus").innerHTML = status_text;
+
+   if (flag ==8){
+       onStopButtonClick();
+   }
   //log('> ' + a.join(' '));
 }
-</script>
 
-<script>
   document.querySelector('#startNotifications').addEventListener('click', function(event) {
     event.stopPropagation();
     event.preventDefault();
 
     if (isWebBluetoothEnabled()) {
       ChromeSamples.clearLog();
+      document.getElementById("temp").innerHTML = '--.-- &#8451;';
+      document.getElementById("devstatus").innerHTML = 'Waiting...';
       onStartButtonClick();
     }
   });
